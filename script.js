@@ -1,13 +1,13 @@
 let fields = [
     null,
-    "circle",
     null,
     null,
     null,
-    "cross",
-    "circle",
     null,
-    "cross"
+    null,
+    null,
+    null,
+    null
 ];
 
 function init() {
@@ -16,33 +16,43 @@ function init() {
 
 function renderTable() {
     let content = document.getElementById("content");
-
     let html = "<table border='1'>";
-
     for (let i = 0; i < 3; i++) {
         html += "<tr>";
-
         for (let j = 0; j < 3; j++) {
             let index = i * 3 + j;
             let value = fields[index];
-
+            let cellContent = "";
+            let onclick = "";
             if (value === "circle") {
-                value = getCircleSVG(); 
+                cellContent = getCircleSVG();
             } else if (value === "cross") {
-                value = getCrossSVG();
+                cellContent = getCrossSVG();
             } else {
-                value = "";
+                cellContent = "";
+                onclick = `onclick=\"cellClicked(${index}, this)\"`;
             }
-
-            html += `<td>${value}</td>`;
+            html += `<td ${onclick}>${cellContent}</td>`;
         }
-
         html += "</tr>";
     }
-
     html += "</table>";
-
     content.innerHTML = html;
+}
+
+let currentPlayer = 'circle';
+
+function cellClicked(index, td) {
+    if (!fields[index]) {
+        fields[index] = currentPlayer;
+        if (currentPlayer === 'circle') {
+            td.innerHTML = getCircleSVG();
+        } else {
+            td.innerHTML = getCrossSVG();
+        }
+        td.removeAttribute('onclick');
+        currentPlayer = currentPlayer === 'circle' ? 'cross' : 'circle';
+    }
 }
 
 function getCircleSVG() {

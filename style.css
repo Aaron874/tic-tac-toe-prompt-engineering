@@ -29,6 +29,10 @@ td {
     border: 5px solid white;
 }
 
+td:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
 /* Außenlinien entfernen */
 tr:first-child td {
     border-top: none;
