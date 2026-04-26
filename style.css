@@ -13,7 +13,9 @@ h1 {
 /* Tabelle */
 table {
     border-collapse: collapse;
-    margin: 20px auto;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 /* Zellen */
@@ -24,9 +26,11 @@ td {
     vertical-align: middle;
     font-size: 32px;
     color: white;
-
-    /* innere Linien */
     border: 5px solid white;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    position: relative;
 }
 
 td:hover {
@@ -50,7 +54,22 @@ td:last-child {
     border-right: none;
 }
 
-#content {
+ #content {
     display: flex;
     align-items: center;
+    justify-content: center;
+}
+
+.restart-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.restart-button:hover {
+    background-color: #45a049;
 }

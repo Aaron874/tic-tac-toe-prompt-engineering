@@ -14,9 +14,10 @@ function init() {
         renderTable();
 }
 
-function renderTable() {
+function renderTable(winLine) {
     let content = document.getElementById("content");
-    let html = "<table border='1'>";
+    let html = '<div style="position:relative;display:inline-block;width:240px;height:240px;">';
+    html += "<table class='tic-tac-toe-table' border='0' style='border-collapse:collapse;width:240px;height:240px;'>";
     for (let i = 0; i < 3; i++) {
         html += "<tr>";
         for (let j = 0; j < 3; j++) {
@@ -32,12 +33,23 @@ function renderTable() {
                 cellContent = "";
                 onclick = `onclick=\"cellClicked(${index}, this)\"`;
             }
-            html += `<td ${onclick}>${cellContent}</td>`;
+            html += `<td ${onclick} style='width:80px;height:80px;text-align:center;vertical-align:middle;position:relative;'>${cellContent}</td>`;
         }
         html += "</tr>";
     }
     html += "</table>";
+    // SVG Linie für Gewinn
+    if (winLine) {
+        html += getWinLineSVG(winLine);
+    }
+    html += '</div>';
     content.innerHTML = html;
+}
+
+function restartGame() {
+    for (let i = 0; i < fields.length; i++) fields[i] = null;
+    currentPlayer = 'circle';
+    renderTable();
 }
 
 let currentPlayer = 'circle';
@@ -51,8 +63,47 @@ function cellClicked(index, td) {
             td.innerHTML = getCrossSVG();
         }
         td.removeAttribute('onclick');
-        currentPlayer = currentPlayer === 'circle' ? 'cross' : 'circle';
+        const winLine = checkWin();
+        if (winLine) {
+            // Nach kurzem Timeout, damit SVG sichtbar wird
+            setTimeout(() => renderTable(winLine), 200);
+        } else {
+            currentPlayer = currentPlayer === 'circle' ? 'cross' : 'circle';
+        }
     }
+}
+
+function checkWin() {
+    const winPatterns = [
+        [0,1,2], [3,4,5], [6,7,8], // rows
+        [0,3,6], [1,4,7], [2,5,8], // cols
+        [0,4,8], [2,4,6]           // diagonals
+    ];
+    for (let pattern of winPatterns) {
+        const [a,b,c] = pattern;
+        if (fields[a] && fields[a] === fields[b] && fields[a] === fields[c]) {
+            return pattern;
+        }
+    }
+    return null;
+}
+
+function getWinLineSVG(pattern) {
+    // SVG Overlay für die Gewinnlinie
+    // Koordinaten für die Mitte der Zellen (exakt mittig)
+    const cellSize = 80;
+    const offset = cellSize / 2;
+    const coords = [
+        [offset, offset], [cellSize + offset, offset], [2 * cellSize + offset, offset],
+        [offset, cellSize + offset], [cellSize + offset, cellSize + offset], [2 * cellSize + offset, cellSize + offset],
+        [offset, 2 * cellSize + offset], [cellSize + offset, 2 * cellSize + offset], [2 * cellSize + offset, 2 * cellSize + offset]
+    ];
+    const [a, b, c] = pattern;
+    const [x1, y1] = coords[a];
+    const [x2, y2] = coords[c];
+    return `<svg width='240' height='240' style='position:absolute;top:0;left:0;pointer-events:none;z-index:10;'>
+        <line x1='${x1}' y1='${y1}' x2='${x2}' y2='${y2}' stroke='white' stroke-width='10' stroke-linecap='round' />
+    </svg>`;
 }
 
 function getCircleSVG() {
